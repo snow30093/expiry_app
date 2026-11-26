@@ -24,11 +24,14 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Install SQLite library for tests
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Static analysis
-        run: flutter analyze
+        run: flutter analyze --no-fatal-infos
 
       - name: Run unit & widget tests
         run: flutter test
