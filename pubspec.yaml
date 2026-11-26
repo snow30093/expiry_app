@@ -1,0 +1,30 @@
+name: expiry_app
+description: 商品效期提醒
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  sqflite: ^2.3.3
+  path: ^1.9.0
+  uuid: ^4.4.0
+  csv: ^8.0.0
+  file_picker: ^13.3.0
+  charset_converter: ^2.1.1
+  mobile_scanner: ^7.4.2
+  flutter_local_notifications: ^22.3.3
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
+  excel_plus: ^2.29.1
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.3
+flutter:
+  uses-material-design: true
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  sqflite_common_ffi: ^2.4.5

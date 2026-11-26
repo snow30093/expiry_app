@@ -1,0 +1,8 @@
+# 複製此檔案為 android/key.properties 並填入正式簽章資訊（此檔已列入 .gitignore，切勿提交至 Git）
+# 產生 keystore 指令範例：
+# keytool -genkey -v -keystore android/app/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=upload-keystore.jks
