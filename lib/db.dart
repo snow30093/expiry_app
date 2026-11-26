@@ -40,7 +40,7 @@ String statusFor(String dept, DateTime expiry, DateTime now) {
 }
 
 /// 匯入／匯出檔的欄位（順序同門市系統匯出的檔案）
-const kExportHeader = ['國碼', '部門', '店內碼', '品名', '有效日期'];
+const kExportHeader = ['國碼', '部門', '店內碼', '品名', '到期日期'];
 
 /// 匯入後的登錄結果
 class ImportStats {
@@ -178,7 +178,7 @@ class Repo {
   }
 
   /// 新增或更新商品資料。同條碼已存在時更新品名、部門、店內碼，
-  /// 但原本的參考有效日期不是 0 就保留，不被檔案覆蓋。
+  /// 但原本的參考到期日期不是 0 就保留，不被檔案覆蓋。
   /// （不用 SQLite 的 UPSERT 語法：Android 7~10 內建的 SQLite 太舊不支援）
   Future<void> upsertProducts(List<Map<String, String>> rows) async {
     final b = _db.batch();
@@ -186,18 +186,18 @@ class Repo {
     for (final r in rows) {
       b.insert('products', {
         'barcode': r['條碼'], 'name': r['品名'], 'dept': r['部門'],
-        'store_code': r['店內碼'], 'ref_expiry': r['有效日期'], 'updated_at': now,
+        'store_code': r['店內碼'], 'ref_expiry': r['到期日期'], 'updated_at': now,
       }, conflictAlgorithm: ConflictAlgorithm.ignore);
       b.rawUpdate(
           'UPDATE products SET name=?, dept=?, store_code=?, updated_at=?, '
           "ref_expiry = CASE WHEN ref_expiry = '$kNone' THEN ? ELSE ref_expiry END "
           'WHERE barcode=?',
-          [r['品名'], r['部門'], r['店內碼'], now, r['有效日期'], r['條碼']]);
+          [r['品名'], r['部門'], r['店內碼'], now, r['到期日期'], r['條碼']]);
     }
     await b.commit(noResult: true);
   }
 
-  /// 匯入：寫入商品，並把檔案裡的有效日期（不是 0）登錄成到期日。
+  /// 匯入：寫入商品，並把檔案裡的到期日期（不是 0）登錄成到期日。
   /// 商品已經有登錄的到期日時保留原本日期，不被檔案覆蓋。
   Future<ImportStats> importProducts(List<Map<String, String>> rows) async {
     await upsertProducts(rows);
@@ -212,7 +212,7 @@ class Repo {
           .toSet();
       final b = tx.batch();
       for (final r in rows) {
-        final date = r['有效日期']!;
+        final date = r['到期日期']!;
         if (date == kNone) continue;
         final code = r['條碼']!;
         if (active.contains(code) || registered.contains(code)) {
@@ -265,7 +265,7 @@ class Repo {
     ];
   }
 
-  /// 待登錄：還沒登錄到期日的商品（匯入時有效日期是 0 或空白的商品）。
+  /// 待登錄：還沒登錄到期日的商品（匯入時到期日期是 0 或空白的商品）。
   /// 登錄後就有批次，自動離開待登錄；批次被刪除則會回到待登錄。
   (String, List<Object?>) _pendingWhere(String? dept) {
     final w = StringBuffer('NOT EXISTS ('

@@ -79,7 +79,7 @@ const _sortLabels = {
   SortMode.name: '品名',
 };
 
-const _pendingTab = '待登錄'; // 匯入時沒有有效日期、還沒登錄到期日的商品
+const _pendingTab = '待登錄'; // 匯入時沒有到期日期、還沒登錄到期日的商品
 const _statusFilters = ['未處理', _pendingTab, '即將過期', '正常', '已處理', '全部'];
 const _pageSize = 300;
 

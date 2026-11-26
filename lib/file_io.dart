@@ -7,7 +7,7 @@ import 'db.dart';
 
 /// 匯入／匯出商品檔：支援 .csv（UTF-8 / Big5）、.xlsx、.xls（只能讀）
 
-const _wanted = ['部門', '品名', '條碼', '店內碼', '有效日期'];
+const _wanted = ['部門', '品名', '條碼', '店內碼', '到期日期'];
 final _sci = RegExp(r'^\d+(\.\d+)?[eE]\+?\d+$'); // Excel 的科學記號，例如 4.71989E+12
 
 class ImportResult {
@@ -158,10 +158,10 @@ ParsedCsv parseRows(List<List<dynamic>> rows) {
     }
     if (!kDepts.contains(m['部門'])) { failed.add('$line：部門「${m['部門']}」不在清單內'); continue; }
     if (_sci.hasMatch(m['店內碼']!)) warnings.add('$line：店內碼被 Excel 轉成科學記號');
-    if (m['有效日期'] == '0') m['有效日期'] = kNone; // 0 代表沒有日期
-    final raw = m['有效日期']!;
-    m['有效日期'] = normDate(raw);
-    if (raw != kNone && m['有效日期'] == kNone) warnings.add('$line：日期「$raw」無法辨識');
+    if (m['到期日期'] == '0') m['到期日期'] = kNone; // 0 代表沒有日期
+    final raw = m['到期日期']!;
+    m['到期日期'] = normDate(raw);
+    if (raw != kNone && m['到期日期'] == kNone) warnings.add('$line：日期「$raw」無法辨識');
     if (good.containsKey(code)) {
       // 原因放固定文字，摘要時才能歸成同一組
       warnings.add('$line（同第${firstLine[code]}行）：國碼重複，以後面那一行為準');
@@ -173,7 +173,7 @@ ParsedCsv parseRows(List<List<dynamic>> rows) {
   return ParsedCsv(good.values.toList(), failed, warnings);
 }
 
-/// 匯入檔案（格式自動判斷），寫入資料庫並登錄檔案裡的有效日期
+/// 匯入檔案（格式自動判斷），寫入資料庫並登錄檔案裡的到期日期
 Future<ImportResult> importFile(Uint8List bytes) async {
   // 幾萬行的檔案在背景解析，避免畫面卡住
   final p = switch (sniffKind(bytes)) {

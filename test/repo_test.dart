@@ -36,9 +36,9 @@ void main() {
     expect(mine.map((b) => b['id']), [id2]);
   });
 
-  test('待登錄：有效日期 0 的商品，登錄後移出、刪除後回來', () async {
+  test('待登錄：到期日期 0 的商品，登錄後移出、刪除後回來', () async {
     Map<String, String> prod(String code, String dept, String name, String date) =>
-        {'條碼': code, '部門': dept, '品名': name, '店內碼': 'S', '有效日期': date};
+        {'條碼': code, '部門': dept, '品名': name, '店內碼': 'S', '到期日期': date};
     await Repo.i.importProducts([
       prod('p1', 'A02', '乙', kNone),
       prod('p2', 'A01', '甲', kNone),
@@ -68,7 +68,7 @@ void main() {
 
   test('匯入：檔案日期登錄成到期日，已有到期日的不覆蓋', () async {
     Map<String, String> prod(String code, String name, String date, {String dept = 'A01'}) =>
-        {'條碼': code, '部門': dept, '品名': name, '店內碼': 'S', '有效日期': date};
+        {'條碼': code, '部門': dept, '品名': name, '店內碼': 'S', '到期日期': date};
     final soon = fmtDate(DateTime.now().add(const Duration(days: 10)));
 
     // 第一次匯入
@@ -96,7 +96,7 @@ void main() {
     expect((await Repo.i.currentBatch('i2'))!['expiry_date'], '2031-03-03');
     expect((await Repo.i.currentBatch('i3'))!['expiry_date'], soon);
     expect((await Repo.i.currentBatch('i4'))!['expiry_date'], '2032-02-02');
-    // 品名照檔案更新，但參考有效日期不是 0 就不覆蓋
+    // 品名照檔案更新，但參考到期日期不是 0 就不覆蓋
     final p1 = (await Repo.i.findProduct('i1'))!;
     expect(p1['name'], '有日期-改名');
     expect(p1['ref_expiry'], '2030-01-01');
@@ -126,7 +126,7 @@ void main() {
 
   test('掃描比對：完全相同優先，其次忽略開頭的 0', () async {
     Map<String, String> prod(String code, String name) =>
-        {'條碼': code, '部門': 'A01', '品名': name, '店內碼': 'S', '有效日期': kNone};
+        {'條碼': code, '部門': 'A01', '品名': name, '店內碼': 'S', '到期日期': kNone};
     await Repo.i.upsertProducts([
       prod('68060286727', 'UPC 掉了 0'),
       prod('4719892835893', 'EAN-13'),
@@ -145,7 +145,7 @@ void main() {
 
   test('掃描比對：條碼與店內碼都比對，條碼優先', () async {
     Map<String, String> prod(String code, String store, String name) =>
-        {'條碼': code, '部門': 'A01', '品名': name, '店內碼': store, '有效日期': kNone};
+        {'條碼': code, '部門': 'A01', '品名': name, '店內碼': store, '到期日期': kNone};
     await Repo.i.upsertProducts([
       prod('4710000000001', '2100000000001', '商品甲'),
       prod('4710000000002', '2100000000002', '商品乙-1'),
@@ -165,7 +165,7 @@ void main() {
 
   test('搜尋：品名、店內碼、條碼部分比對，多個關鍵字都要符合', () async {
     Map<String, String> prod(String code, String store, String name, {String dept = 'A07'}) =>
-        {'條碼': code, '部門': dept, '品名': name, '店內碼': store, '有效日期': kNone};
+        {'條碼': code, '部門': dept, '品名': name, '店內碼': store, '到期日期': kNone};
     await Repo.i.upsertProducts([
       prod('s1', '2100099000001', 'OLAY胜肽緊緻乳霜50g'),
       prod('s2', '2100099000002', 'OLAY 淨白精華 30ml'),

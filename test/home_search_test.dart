@@ -13,7 +13,7 @@ void main() {
       await databaseFactory.deleteDatabase(p.join(await getDatabasesPath(), 'test_home.db'));
       await Repo.i.init(name: 'test_home.db');
       Map<String, String> prod(String code, String store, String name) =>
-          {'條碼': code, '部門': 'A01', '品名': name, '店內碼': store, '有效日期': kNone};
+          {'條碼': code, '部門': 'A01', '品名': name, '店內碼': store, '到期日期': kNone};
       await Repo.i.upsertProducts([
         prod('4710000000001', '2100012318426', '蜂蜜卸妝油180ml'),
         prod('4710000000002', '2100012318433', '蜂蜜潔顏膏90g'),

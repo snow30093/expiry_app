@@ -59,7 +59,7 @@ void main() {
 
   group('parseCsv', () {
     test('欄位順序不限、BOM、CRLF、引號、空白行', () {
-      const text = '﻿備註,條碼,品名,部門,店內碼,有效日期\r\n'
+      const text = '﻿備註,條碼,品名,部門,店內碼,到期日期\r\n'
           'x,4710000000011,"鮮奶, 大",A01,S1,2026/12/31\r\n'
           '\r\n'
           ',4710000000028,餅乾,A02,S2,\r\n';
@@ -68,8 +68,8 @@ void main() {
       expect(r.warnings, isEmpty);
       expect(r.good.length, 2);
       expect(r.good[0]['品名'], '鮮奶, 大');
-      expect(r.good[0]['有效日期'], '2026-12-31');
-      expect(r.good[1]['有效日期'], kNone);
+      expect(r.good[0]['到期日期'], '2026-12-31');
+      expect(r.good[1]['到期日期'], kNone);
       expect(r.good[1]['店內碼'], 'S2');
     });
 
@@ -82,14 +82,14 @@ void main() {
 
   test('表頭寫「國碼」或「條碼」都可以匯入', () {
     for (final h in ['國碼', '條碼']) {
-      final r = parseCsv('$h,部門,店內碼,品名,有效日期\n4719892835893,A01,2100012318426,商品,0\n');
+      final r = parseCsv('$h,部門,店內碼,品名,到期日期\n4719892835893,A01,2100012318426,商品,0\n');
       expect(r.failed, isEmpty, reason: h);
       expect(r.good.single['條碼'], '4719892835893', reason: h);
     }
     });
 
     test('失敗與提醒，行號對得上檔案', () {
-      const text = '部門,品名,條碼,店內碼,有效日期\n'
+      const text = '部門,品名,條碼,店內碼,到期日期\n'
           'A01,無條碼,,S,2026-01-01\n'
           'Z99,錯部門,111,S,2026-01-01\n'
           'A01,科學記號,4.71E+12,S,2026-01-01\n'
@@ -110,7 +110,7 @@ void main() {
     });
 
     test('B01、B04、POYA 部門可以匯入', () {
-      const text = '條碼,部門,店內碼,品名,有效日期\n'
+      const text = '條碼,部門,店內碼,品名,到期日期\n'
           '1,B01,S,雪肌精,0\n'
           '2,B04,S,資生堂,0\n'
           '3,POYA,S,寶雅購物袋,0\n';
@@ -119,11 +119,11 @@ void main() {
       expect(r.good.map((m) => m['部門']), ['B01', 'B04', 'POYA']);
     });
 
-    test('有效日期 0 視為空白、店內碼科學記號只提醒', () {
-      const text = '條碼,部門,店內碼,品名,有效日期\n'
+    test('到期日期 0 視為空白、店內碼科學記號只提醒', () {
+      const text = '條碼,部門,店內碼,品名,到期日期\n'
           '68060286727,A01,2.10001E+12, 3M修護貼,0\n';
       final r = parseCsv(text);
-      expect(r.good.single['有效日期'], kNone);
+      expect(r.good.single['到期日期'], kNone);
       expect(r.good.single['品名'], '3M修護貼');
       expect(r.warnings.single, endsWith('店內碼被 Excel 轉成科學記號'));
     });

@@ -17,10 +17,10 @@ void main() {
     expect(p.failed, isEmpty);
     expect(p.good.length, 3);
     expect(p.good[0]['條碼'], '4719892835893');
-    expect(p.good[0]['有效日期'], '2030-01-01');
+    expect(p.good[0]['到期日期'], '2030-01-01');
     expect(p.good[1]['條碼'], '068060286727'); // 開頭的 0 保留
     expect(p.good[1]['品名'], '品名, 有逗號');
-    expect(p.good[1]['有效日期'], kNone);
+    expect(p.good[1]['到期日期'], kNone);
     expect(p.good[2]['店內碼'], kNone);
     expect(p.good[2]['品名'], '"引號"商品');
   }
@@ -75,8 +75,8 @@ void main() {
     expect(p.failed, isEmpty);
     expect(p.good[0]['條碼'], '4719892835893');
     expect(p.good[0]['店內碼'], '2100012318426');
-    expect(p.good[0]['有效日期'], '2030-02-03');
-    expect(p.good[1]['有效日期'], kNone);
+    expect(p.good[0]['到期日期'], '2030-02-03');
+    expect(p.good[1]['到期日期'], kNone);
   });
 
   test('Excel 缺欄位', () {
